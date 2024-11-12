@@ -1,0 +1,10 @@
+extend type Mutation {
+  register(
+    username: String!
+    email: String!
+    password: String!
+    role: String!
+  ): String!
+
+  login(username: String!, password: String!): Boolean
+}

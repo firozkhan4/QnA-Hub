@@ -1,6 +1,7 @@
 package com.firozkhan.server.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -14,6 +15,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     @Query("{'$or': [ { 'username' : ?0 }, { 'email' : ?1 } ] }")
     List<User> findByUsernameOrEmail(String username, String email);
 
-    List<User> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
 }
