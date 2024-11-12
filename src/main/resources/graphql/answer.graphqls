@@ -1,0 +1,18 @@
+type Answer {
+  id: ID!
+  content: String!
+  question: ID!
+  user: ID!
+}
+
+extend type Query {
+  getAllAnswers: [Answer]
+  getAnswerById(id: ID!): Answer
+  getAnswersByQuestionId(question: ID!): [Answer]
+}
+
+extend type Mutation {
+  createAnswer(content: String!, question: ID!, user: ID!): Answer
+  updateAnswer(id: ID!, content: String!): Answer
+  deleteAnswer(id: ID!): Boolean
+}

@@ -1,0 +1,23 @@
+type AnswerVote {
+  id: String!
+  answerId: String!
+  userId: String!
+  vote: Vote!
+}
+
+enum Vote {
+  UPVOTE
+  DOWNVOTE
+}
+
+extend type Query {
+  getAnswerVoteCount(answerId: String!): Int!
+
+  getAnswerVoteDetails(answerId: String!): [AnswerVote]
+}
+
+extend type Mutation {
+  upvoteAnswer(answerId: String!, userId: String!): AnswerVote!
+
+  downvoteAnswer(answerId: String!, userId: String!): AnswerVote!
+}

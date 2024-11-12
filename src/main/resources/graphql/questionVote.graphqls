@@ -1,0 +1,18 @@
+type QuestionVote {
+  id: String!
+  questionId: String!
+  userId: String!
+  vote: Vote!
+}
+
+extend type Query {
+  getQuestionVoteCount(questionId: String!): Int!
+
+  getQuestionVoteDetails(questionId: String!): [QuestionVote]
+}
+
+extend type Mutation {
+  upvoteQuestion(questionId: String!, userId: String!): QuestionVote!
+
+  downvoteQuestion(questionId: String!, userId: String!): QuestionVote!
+}

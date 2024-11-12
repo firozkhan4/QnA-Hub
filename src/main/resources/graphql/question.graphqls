@@ -1,0 +1,18 @@
+type Question {
+  id: ID!
+  title: String!
+  content: String!
+  user: ID!
+}
+
+extend type Query {
+  getAllQuestion: [Question]
+  getQuestionById(id: ID!): Question
+}
+
+extend type Mutation {
+  createQuestion(title: String!, content: String!, user: ID!): Question
+  updateQuestion(id: ID!, title: String!, content: String!): Question
+  deleteQuestion(id: ID!): Boolean
+  deleteAllQuestion: Boolean
+}
