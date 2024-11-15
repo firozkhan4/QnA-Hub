@@ -22,7 +22,15 @@ public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter
                     .path(env.getExecutionStepInfo().getPath())
                     .location(env.getField().getSourceLocation())
                     .build();
+        } else if (ex instanceof InvalidCredentialsException) {
+            return GraphqlErrorBuilder.newError()
+                    .errorType(ErrorType.BAD_REQUEST)
+                    .message(ex.getMessage())
+                    .path(env.getExecutionStepInfo().getPath())
+                    .location(env.getField().getSourceLocation())
+                    .build();
         }
+
         return null;
     }
 

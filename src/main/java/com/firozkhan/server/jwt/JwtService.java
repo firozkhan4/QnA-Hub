@@ -52,7 +52,7 @@ public class JwtService {
             return decodedJWT.getClaims();
         } catch (JWTVerificationException e) {
             log.error("Token verification failed for token: {}", token, e);
-            return null; // Or throw a custom exception
+            return null;
         }
     }
 

@@ -56,7 +56,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 log.error("Invalid JWT Token: {}", e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Invalid JWT Token");
-                return;
             }
         } else {
             log.warn("JWT token is missing in the cookies");

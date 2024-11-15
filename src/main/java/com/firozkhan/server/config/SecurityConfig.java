@@ -21,19 +21,22 @@ public class SecurityConfig {
 
     private final UserDetailsServiceImp userDetailsServiceImp;
     private final JwtFilter jwtFilter;
+    private final CustomCorsConfiguration customCorsConfiguration;
 
-    public SecurityConfig(UserDetailsServiceImp userDetailsServiceImp, JwtFilter jwtFilter) {
+    public SecurityConfig(UserDetailsServiceImp userDetailsServiceImp, JwtFilter jwtFilter,
+            CustomCorsConfiguration customCorsConfiguration) {
         this.userDetailsServiceImp = userDetailsServiceImp;
         this.jwtFilter = jwtFilter;
+        this.customCorsConfiguration = customCorsConfiguration;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(cors -> cors.disable())
+                .cors(cors -> cors.configurationSource(customCorsConfiguration))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**")
+                        .requestMatchers("/api/auth/**", "/graphql")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

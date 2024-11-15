@@ -101,6 +101,12 @@ public class User implements UserDetails {
             return this;
         }
 
+        @Override
+        public String toString() {
+            return "Builder [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
+                    + ", role=" + role + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + "]";
+        }
+
         public Builder username(String username) {
             this.username = username;
             return this;

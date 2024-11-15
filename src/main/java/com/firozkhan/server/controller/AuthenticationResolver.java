@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.firozkhan.server.dto.AuthResponseDTO;
+import com.firozkhan.server.dto.UserResponseDTO;
 import com.firozkhan.server.model.User;
 import com.firozkhan.server.service.AuthenticationService;
+import com.firozkhan.server.utils.ValidationUtils;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,38 +28,45 @@ public class AuthenticationResolver {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User request, HttpServletResponse response) {
+    public ResponseEntity<UserResponseDTO> register(@RequestBody User request, HttpServletResponse response) {
 
-        log.info("Request in register controller");
+        log.info("New User is Created");
 
-        String token = authenticationService.register(
-                request.getUsername(), request.getEmail(), request.getPassword(), request.getRole());
+        AuthResponseDTO authResponseDTO = authenticationService.register(
+                request.getUsername(),
+                request.getEmail(),
+                request.getPassword(),
+                request.getRole());
 
-        Cookie jwtCookie = new Cookie("token", token);
+        Cookie jwtCookie = new Cookie("token", authResponseDTO.toString());
         jwtCookie.setHttpOnly(false);
         jwtCookie.setSecure(true);
         jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(24 * 60 * 60 * 60);
         response.addCookie(jwtCookie);
 
-        return ResponseEntity.ok("OK");
+        return ResponseEntity.ok(authResponseDTO.getUser());
 
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User request, HttpServletResponse response) {
+    public ResponseEntity<UserResponseDTO> login(@RequestBody User request, HttpServletResponse response) {
 
-        String token = authenticationService.register(
-                request.getUsername(), request.getEmail(), request.getPassword(), request.getRole());
+        log.info("User Login");
 
-        Cookie jwtCookie = new Cookie("token", token);
+        if (ValidationUtils.isNullOrEmpty(request.getUsername())
+                || ValidationUtils.isNullOrEmpty(request.getPassword())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        AuthResponseDTO authResponseDTO = authenticationService.authenticate(request);
+
+        Cookie jwtCookie = new Cookie("token", authResponseDTO.getToken());
         jwtCookie.setHttpOnly(false);
         jwtCookie.setSecure(true);
         jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(24 * 60 * 60 * 60);
         response.addCookie(jwtCookie);
 
-        return ResponseEntity.ok("OK");
+        return ResponseEntity.ok(authResponseDTO.getUser());
     }
 
 }
