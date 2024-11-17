@@ -36,6 +36,10 @@ public class AuthenticationService {
 
     public AuthResponseDTO register(String username, String email, String password, Role role) {
 
+        if (!userRepository.findByUsernameOrEmail(username, email).isEmpty()) {
+            throw new InvalidCredentialsException("Username or Password Already Exists");
+        }
+
         User user = new User.Builder()
                 .username(username)
                 .email(email)

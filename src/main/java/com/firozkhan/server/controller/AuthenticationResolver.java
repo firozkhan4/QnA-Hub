@@ -39,7 +39,7 @@ public class AuthenticationResolver {
                 request.getRole());
 
         Cookie jwtCookie = new Cookie("token", authResponseDTO.toString());
-        jwtCookie.setHttpOnly(false);
+        jwtCookie.setHttpOnly(true);
         jwtCookie.setSecure(true);
         jwtCookie.setPath("/");
         response.addCookie(jwtCookie);
@@ -61,7 +61,7 @@ public class AuthenticationResolver {
         AuthResponseDTO authResponseDTO = authenticationService.authenticate(request);
 
         Cookie jwtCookie = new Cookie("token", authResponseDTO.getToken());
-        jwtCookie.setHttpOnly(false);
+        jwtCookie.setHttpOnly(true);
         jwtCookie.setSecure(true);
         jwtCookie.setPath("/");
         response.addCookie(jwtCookie);

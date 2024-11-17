@@ -22,8 +22,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getByUsername(String id) {
-        return userRepository.findById(id);
+    public Optional<User> getByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public User create(User entity) {

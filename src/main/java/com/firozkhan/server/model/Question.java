@@ -14,6 +14,7 @@ public class Question {
     @Id
     private String id;
     private String title;
+    private String heading;
     private String content;
 
     @CreatedDate
@@ -28,6 +29,7 @@ public class Question {
     private Question(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
+        this.heading = builder.heading;
         this.content = builder.content;
         this.createdDate = builder.createdDate;
         this.lastModifiedDate = builder.lastModifiedDate;
@@ -65,6 +67,7 @@ public class Question {
         return new Builder()
                 .id(this.id)
                 .title(this.title)
+                .heading(this.heading)
                 .content(this.content)
                 .createdDate(this.createdDate)
                 .lastModifiedDate(this.lastModifiedDate)
@@ -75,6 +78,7 @@ public class Question {
         private String id;
         private String title;
         private String content;
+        private String heading;
         private LocalDateTime createdDate;
         private LocalDateTime lastModifiedDate;
         private User user;
@@ -112,6 +116,11 @@ public class Question {
             return this;
         }
 
+        public Builder heading(String heading) {
+            this.heading = heading;
+            return this;
+        }
+
         public Question build() {
             return new Question(this);
         }
@@ -119,5 +128,9 @@ public class Question {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public String getHeading() {
+        return heading;
     }
 }

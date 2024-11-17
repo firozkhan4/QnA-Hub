@@ -1,9 +1,11 @@
 package com.firozkhan.server.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.firozkhan.server.dto.QuestionDTO;
 import com.firozkhan.server.error.NotFoundException;
 import com.firozkhan.server.model.Question;
 import com.firozkhan.server.model.User;
@@ -21,26 +23,44 @@ public class QuestionService {
         this.userRepository = userRepository;
     }
 
-    public List<Question> getAll() {
-        return questionRepository.findAll();
+    public List<QuestionDTO> getAll() {
+        List<Question> questions = questionRepository.findAll();
+        if (questions.isEmpty()) {
+            throw new NotFoundException("No questions found.");
+        }
+        return questions.stream()
+                .map(this::mapToQuestionDTO)
+                .collect(Collectors.toList());
     }
 
-    public Question getById(String id) {
-        return questionRepository.findById(id)
+    public QuestionDTO getById(String id) {
+        Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Question not found by id: " + id));
+
+        return mapToQuestionDTO(question);
     }
 
-    public Question create(String title, String content, String userId) {
-        User existUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User name not found by id: " + userId));
+    public QuestionDTO create(QuestionDTO questionDTO, User user) {
 
         Question question = new Question.Builder()
-                .title(title)
-                .content(content)
-                .user(existUser)
+                .title(questionDTO.title())
+                .content(questionDTO.content())
+                .heading(questionDTO.heading())
+                .user(user)
                 .build();
 
-        return questionRepository.save(question);
+        Question savedQuestion = questionRepository.save(question);
+        return mapToQuestionDTO(savedQuestion);
+    }
+
+    public QuestionDTO update(String id, String title, String content, String heading) {
+        Question existQuestion = questionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Question not found by id: " + id));
+
+        existQuestion = existQuestion.toBuilder().title(title).content(content).heading(heading).build();
+
+        Question updatedQuestion = questionRepository.save(existQuestion);
+        return mapToQuestionDTO(updatedQuestion);
     }
 
     public Boolean deleteById(String id) {
@@ -48,23 +68,21 @@ public class QuestionService {
             questionRepository.deleteById(id);
             return true;
         }
-
         throw new NotFoundException("Question not found by id: " + id);
-    }
-
-    public Question update(String id, String title, String content) {
-
-        Question existQuestion = questionRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Question not found by id: " + id));
-
-        existQuestion = existQuestion.toBuilder().title(title).content(content).build();
-
-        return questionRepository.save(existQuestion);
-
     }
 
     public Boolean deleteAllQuestion() {
         questionRepository.deleteAll();
         return questionRepository.count() == 0;
+    }
+
+    private QuestionDTO mapToQuestionDTO(Question question) {
+        return new QuestionDTO(
+                question.getId(),
+                question.getTitle(),
+                question.getHeading(),
+                question.getContent(),
+                question.getUser().getId(),
+                question.getCreatedDate().toString());
     }
 }

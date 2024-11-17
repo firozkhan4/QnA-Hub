@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(customCorsConfiguration))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**", "/graphql")
+                        .requestMatchers("/api/auth/**", "/graphql", "/api/questions")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
