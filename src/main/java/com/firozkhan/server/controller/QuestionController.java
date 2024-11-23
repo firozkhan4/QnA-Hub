@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.firozkhan.server.dto.QuestionDTO;
+import com.firozkhan.server.model.Question;
 import com.firozkhan.server.model.User;
 import com.firozkhan.server.service.DataFetcher;
 import com.firozkhan.server.service.QuestionService;
@@ -66,13 +66,9 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuestionDTO> updateQuestion(
-            @PathVariable String id,
-            @RequestParam String title,
-            @RequestParam String content,
-            @RequestParam String heading) {
+    public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable String id, @RequestBody Question entity) {
         logger.trace("Updating question with ID: {}", id);
-        QuestionDTO updatedQuestion = questionService.update(id, title, content, heading);
+        QuestionDTO updatedQuestion = questionService.update(id, entity);
         return ResponseEntity.ok(updatedQuestion);
     }
 

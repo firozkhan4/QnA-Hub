@@ -6,9 +6,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.firozkhan.server.dto.AuthResponseDTO;
-import com.firozkhan.server.dto.UserResponseDTO;
-import com.firozkhan.server.enums.Role;
+import com.firozkhan.server.dto.Response.AuthResponseDTO;
+import com.firozkhan.server.dto.Response.UserResponseDTO;
 import com.firozkhan.server.error.InvalidCredentialsException;
 import com.firozkhan.server.error.NotFoundException;
 import com.firozkhan.server.jwt.JwtService;
@@ -34,25 +33,29 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public AuthResponseDTO register(String username, String email, String password, Role role) {
+    public AuthResponseDTO register(User user) {
 
-        if (!userRepository.findByUsernameOrEmail(username, email).isEmpty()) {
+        if (!userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail()).isEmpty()) {
             throw new InvalidCredentialsException("Username or Password Already Exists");
         }
 
-        User user = new User.Builder()
-                .username(username)
-                .email(email)
-                .role(role)
-                .password(passwordEncoder.encode(password))
+        User newUser = new User.Builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .password(passwordEncoder.encode(user.getPassword()))
                 .build();
 
-        user = userRepository.save(user);
+        newUser = userRepository.save(newUser);
 
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(newUser);
 
         return new AuthResponseDTO(
-                new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.getRole()),
+                new UserResponseDTO(
+                        newUser.getId(),
+                        newUser.getUsername(),
+                        newUser.getEmail(),
+                        newUser.getRole()),
                 token);
 
     }
@@ -70,11 +73,10 @@ public class AuthenticationService {
                 .orElseThrow(
                         () -> new NotFoundException("User not found by id"));
 
-        log.info(user.toString());
-
         String token = jwtService.generateToken(user);
 
         return new AuthResponseDTO(
-                new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.getRole()), token);
+                new UserResponseDTO(user.getId(), user.getUsername(), user.getEmail(), user.getRole()),
+                token);
     }
 }

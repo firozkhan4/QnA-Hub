@@ -2,9 +2,11 @@ package com.firozkhan.server.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.firozkhan.server.dto.Response.UserResponseDTO;
 import com.firozkhan.server.error.NotFoundException;
 import com.firozkhan.server.model.User;
 import com.firozkhan.server.repository.UserRepository;
@@ -18,8 +20,13 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAll() {
-        return userRepository.findAll();
+    public List<UserResponseDTO> getAll() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(this::mapToUserResponseDTO)
+                .collect(Collectors.toList());
+
     }
 
     public Optional<User> getByUsername(String username) {
@@ -52,5 +59,22 @@ public class UserService {
                 .toBuilder()
                 .username(username)
                 .build());
+    }
+
+    public void deleteUser(String id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return;
+        }
+
+        throw new NotFoundException("User not found by id: " + id);
+    }
+
+    private UserResponseDTO mapToUserResponseDTO(User user) {
+        return new UserResponseDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole());
     }
 }

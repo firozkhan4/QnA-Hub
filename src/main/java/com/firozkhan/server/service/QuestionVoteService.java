@@ -25,26 +25,23 @@ public class QuestionVoteService {
         this.userRepository = userRepository;
     }
 
-    public QuestionVote upvoteQuestion(String questionId, String userId) {
-        return voteQuestion(questionId, userId, Vote.UPVOTE);
+    public QuestionVote upvoteQuestion(String questionId, User user) {
+        return voteQuestion(questionId, user, Vote.UPVOTE);
     }
 
-    public QuestionVote downvoteQuestion(String questionId, String userId) {
-        return voteQuestion(questionId, userId, Vote.DOWNVOTE);
+    public QuestionVote downvoteQuestion(String questionId, User user) {
+        return voteQuestion(questionId, user, Vote.DOWNVOTE);
     }
 
     public long getVoteCount(String questionId) {
         return questionVoteRepository.countByQuestionId(questionId);
     }
 
-    private QuestionVote voteQuestion(String questionId, String userId, Vote vote) {
+    private QuestionVote voteQuestion(String questionId, User user, Vote vote) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new NotFoundException("Question not found for ID: " + questionId));
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found for ID: " + userId));
-
-        QuestionVote existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, userId);
+        QuestionVote existingVote = questionVoteRepository.findByQuestionIdAndUserId(questionId, user.getId());
 
         if (existingVote != null) {
             existingVote = existingVote.toBuilder().vote(vote).build();

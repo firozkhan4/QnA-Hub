@@ -10,24 +10,24 @@ import com.firozkhan.server.error.NotFoundException;
 import com.firozkhan.server.model.Question;
 import com.firozkhan.server.model.User;
 import com.firozkhan.server.repository.QuestionRepository;
-import com.firozkhan.server.repository.UserRepository;
 
 @Service
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
-    private final UserRepository userRepository;
 
-    public QuestionService(QuestionRepository questionRepository, UserRepository userRepository) {
+    public QuestionService(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
-        this.userRepository = userRepository;
     }
 
     public List<QuestionDTO> getAll() {
+
         List<Question> questions = questionRepository.findAll();
+
         if (questions.isEmpty()) {
             throw new NotFoundException("No questions found.");
         }
+
         return questions.stream()
                 .map(this::mapToQuestionDTO)
                 .collect(Collectors.toList());
@@ -53,11 +53,16 @@ public class QuestionService {
         return mapToQuestionDTO(savedQuestion);
     }
 
-    public QuestionDTO update(String id, String title, String content, String heading) {
+    public QuestionDTO update(String id, Question entity) {
+
         Question existQuestion = questionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Question not found by id: " + id));
 
-        existQuestion = existQuestion.toBuilder().title(title).content(content).heading(heading).build();
+        existQuestion = existQuestion.toBuilder()
+                .title(entity.getTitle())
+                .content(entity.getContent())
+                .heading(entity.getHeading())
+                .build();
 
         Question updatedQuestion = questionRepository.save(existQuestion);
         return mapToQuestionDTO(updatedQuestion);

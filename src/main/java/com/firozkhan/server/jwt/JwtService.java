@@ -33,7 +33,7 @@ public class JwtService {
                 .withSubject(user.getUsername())
                 .withClaim("userId", user.getId())
                 .withClaim("email", user.getEmail())
-                .withIssuedAt(new Date())
+                .withIssuedAt(new Date(System.currentTimeMillis()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 60))
                 .withJWTId(UUID.randomUUID().toString())
                 .sign(getAlgorithm());

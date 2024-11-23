@@ -1,4 +1,4 @@
-package com.firozkhan.server.dto;
+package com.firozkhan.server.dto.Response;
 
 public class AuthResponseDTO {
 
