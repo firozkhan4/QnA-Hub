@@ -17,7 +17,8 @@ public class CustomCorsConfiguration implements CorsConfigurationSource {
     @Nullable
     public CorsConfiguration getCorsConfiguration(@NonNull HttpServletRequest request) {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:8080"));
+        config.setAllowedOrigins(List.of("http://localhost:5173", "http://127.0.0.1:5173", "http://13.233.86.88:8000/*",
+                "http://13.233.86.88:8000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         config.setAllowCredentials(true);
         config.setAllowedHeaders(List.of("*"));
