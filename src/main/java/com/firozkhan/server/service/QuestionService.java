@@ -6,31 +6,34 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.firozkhan.server.dto.QuestionDTO;
+import com.firozkhan.server.dto.Response.QuestionResponseDTO;
 import com.firozkhan.server.error.NotFoundException;
 import com.firozkhan.server.model.Question;
 import com.firozkhan.server.model.User;
 import com.firozkhan.server.repository.QuestionRepository;
+import com.firozkhan.server.repository.imp.CustomQuestionRepositoryImp;
 
 @Service
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final CustomQuestionRepositoryImp customQuestionRepositoryImp;
 
-    public QuestionService(QuestionRepository questionRepository) {
+    public QuestionService(QuestionRepository questionRepository,
+            CustomQuestionRepositoryImp customQuestionRepositoryImp) {
         this.questionRepository = questionRepository;
+        this.customQuestionRepositoryImp = customQuestionRepositoryImp;
     }
 
-    public List<QuestionDTO> getAll() {
+    public List<QuestionResponseDTO> getAll() {
 
-        List<Question> questions = questionRepository.findAll();
+        List<QuestionResponseDTO> questions = customQuestionRepositoryImp.findQuestionsWithVotes();
 
         if (questions.isEmpty()) {
             throw new NotFoundException("No questions found.");
         }
 
-        return questions.stream()
-                .map(this::mapToQuestionDTO)
-                .collect(Collectors.toList());
+        return questions;
     }
 
     public QuestionDTO getById(String id) {
@@ -79,6 +82,14 @@ public class QuestionService {
     public Boolean deleteAllQuestion() {
         questionRepository.deleteAll();
         return questionRepository.count() == 0;
+    }
+
+    public List<QuestionResponseDTO> getCurrentUserQuestions(User user) {
+        return customQuestionRepositoryImp.findByUser(user);
+    }
+
+    public List<QuestionResponseDTO> search(String input) {
+        return customQuestionRepositoryImp.searchQuestions(input);
     }
 
     private QuestionDTO mapToQuestionDTO(Question question) {

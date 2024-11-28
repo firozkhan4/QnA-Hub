@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class AnswerController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<AnswerResponseDTO> getAllAnswers() {
         log.trace("Fetching all answers");
         return answerService.getAllAnswers();

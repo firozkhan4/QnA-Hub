@@ -9,20 +9,16 @@ import com.firozkhan.server.model.QuestionVote;
 import com.firozkhan.server.model.User;
 import com.firozkhan.server.repository.QuestionRepository;
 import com.firozkhan.server.repository.QuestionVoteRepository;
-import com.firozkhan.server.repository.UserRepository;
 
 @Service
 public class QuestionVoteService {
 
     private final QuestionVoteRepository questionVoteRepository;
     private final QuestionRepository questionRepository;
-    private final UserRepository userRepository;
 
-    public QuestionVoteService(QuestionVoteRepository questionVoteRepository, QuestionRepository questionRepository,
-            UserRepository userRepository) {
+    public QuestionVoteService(QuestionVoteRepository questionVoteRepository, QuestionRepository questionRepository) {
         this.questionVoteRepository = questionVoteRepository;
         this.questionRepository = questionRepository;
-        this.userRepository = userRepository;
     }
 
     public QuestionVote upvoteQuestion(String questionId, User user) {

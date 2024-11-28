@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.firozkhan.server.dto.QuestionDTO;
+import com.firozkhan.server.dto.Response.QuestionResponseDTO;
 import com.firozkhan.server.model.Question;
 import com.firozkhan.server.model.User;
 import com.firozkhan.server.service.DataFetcher;
@@ -36,9 +37,9 @@ public class QuestionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<QuestionDTO>> getAllQuestions() {
+    public ResponseEntity<List<QuestionResponseDTO>> getAllQuestions() {
         logger.trace("Fetching all questions");
-        List<QuestionDTO> questions = questionService.getAll();
+        List<QuestionResponseDTO> questions = questionService.getAll();
         return ResponseEntity.ok(questions);
     }
 
@@ -77,5 +78,19 @@ public class QuestionController {
         logger.trace("Deleting all questions");
         boolean isDeleted = questionService.deleteAllQuestion();
         return ResponseEntity.ok(isDeleted);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<QuestionResponseDTO>> getCurrentUserQuestion(HttpServletRequest request) {
+        User user = dataFetcher.getCurrentUser(request);
+        return ResponseEntity.ok(questionService.getCurrentUserQuestions(user));
+    }
+
+    @GetMapping("/search/{search}")
+    public ResponseEntity<List<QuestionResponseDTO>> getSearchQuestions(@PathVariable String search) {
+        if (search.equals("all")) {
+            search = ".*";
+        }
+        return ResponseEntity.ok(questionService.search(search));
     }
 }
